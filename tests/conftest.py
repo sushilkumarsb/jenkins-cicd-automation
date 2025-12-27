@@ -17,6 +17,11 @@ def app():
     return app
 
 @pytest.fixture(scope='function')
+def client(app):
+    """Create a test client"""
+    return app.test_client()
+
+@pytest.fixture(scope='function')
 def test_config():
     """Provide test configuration"""
     return {

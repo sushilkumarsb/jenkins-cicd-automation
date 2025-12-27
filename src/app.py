@@ -1,10 +1,15 @@
 """
 Sample Python Flask Application
 """
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import os
+import logging
 
 app = Flask(__name__)
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @app.route('/')
 def home():
@@ -19,18 +24,24 @@ def home():
 def health():
     """Health check endpoint"""
     return jsonify({
-        'status': 'healthy',
-        'service': 'jenkins-cicd-app'
+        'status': 'ok'
     }), 200
 
-@app.route('/api/info')
-def info():
-    """Application info endpoint"""
+@app.route('/version')
+def version():
+    """Version endpoint"""
     return jsonify({
-        'app_name': 'Jenkins CI/CD App',
-        'environment': os.getenv('ENVIRONMENT', 'development'),
         'version': '1.0.0'
     })
+
+@app.route('/deploy', methods=['POST'])
+def deploy():
+    """Deploy endpoint"""
+    logger.info("Deployment triggered")
+    return jsonify({
+        'status': 'success'
+    })
+
 
 def add_numbers(a, b):
     """Simple function to demonstrate testing"""
@@ -38,4 +49,4 @@ def add_numbers(a, b):
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=True)
