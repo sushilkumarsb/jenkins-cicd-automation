@@ -1,0 +1,59 @@
+# Staging Environment Configuration
+
+environment: staging
+
+application:
+  name: jenkins-cicd-app
+  version: 1.0.0
+  port: 5000
+  debug: true
+  log_level: DEBUG
+
+docker:
+  image: your-registry/jenkins-cicd-app
+  tag: staging
+  replicas: 1
+  resources:
+    limits:
+      memory: 256Mi
+      cpu: 250m
+    requests:
+      memory: 128Mi
+      cpu: 100m
+
+database:
+  host: staging-db.example.com
+  port: 5432
+  name: staging_db
+  # Use environment variables or secrets for credentials
+  # user: ${DB_USER}
+  # password: ${DB_PASSWORD}
+
+redis:
+  host: staging-redis.example.com
+  port: 6379
+  # password: ${REDIS_PASSWORD}
+
+monitoring:
+  enabled: true
+  prometheus:
+    port: 9090
+  grafana:
+    port: 3000
+
+security:
+  ssl_enabled: false
+  cors_origins:
+    - http://localhost:3000
+    - https://staging.example.com
+
+scaling:
+  auto_scaling: false
+  min_replicas: 1
+  max_replicas: 2
+  target_cpu_utilization: 80
+
+backup:
+  enabled: false
+  schedule: "0 3 * * *"  # Daily at 3 AM
+  retention_days: 7
