@@ -1,6 +1,10 @@
 pipeline {
     agent any
-    
+
+     triggers {
+        githubPush()  // Auto-trigger on GitHub push
+    }
+
     environment {
         APP_NAME = 'jenkins-cicd-app'
         PYTHON_VERSION = '3.11'
