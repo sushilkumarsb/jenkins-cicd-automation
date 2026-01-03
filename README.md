@@ -2,26 +2,31 @@
 
 > Enterprise-grade CI/CD pipeline demonstrating automated build, test, and deployment workflows with Jenkins
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
-[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)]()
-[![Python](https://img.shields.io/badge/python-3.13-blue)]()
+[![Build Status](https://sushilkumarsb.xyz/buildStatus/icon?job=jenkins-cicd-automation)](https://sushilkumarsb.xyz/job/jenkins-cicd-automation/)
+[![Coverage](https://img.shields.io/badge/coverage-92%25-brightgreen)]()
+[![Python](https://img.shields.io/badge/python-3.12-blue)]()
 [![Jenkins](https://img.shields.io/badge/jenkins-2.528-blue)]()
+[![AWS](https://img.shields.io/badge/AWS-EC2-orange)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)]()
 
 ## 🎯 Project Overview
 
-A production-ready Jenkins CI/CD pipeline showcasing automated deployment workflows for a Flask REST API. This project demonstrates:
+A production-ready Jenkins CI/CD pipeline deployed on AWS EC2 with automated GitHub webhook integration. This project demonstrates:
 
 - **Automated multi-stage pipeline**: Build → Test → Code Quality
-- **Continuous testing** with pytest and coverage reporting
-- **Performance optimization**: Reduced deployment time by 50% through automated workflows
-- **Best practices**: Clean code, comprehensive testing, and automated quality checks
+- **GitHub webhook integration**: Instant build triggers on code push
+- **AWS EC2 deployment**: Production Jenkins server with custom domain
+- **Continuous testing** with pytest and 92% code coverage
+- **Performance optimization**: Reduced deployment time by 50% through automation
+
+**Live Jenkins:** [https://sushilkumarsb.xyz](https://sushilkumarsb.xyz/job/jenkins-cicd-automation/)
 
 **Impact Metrics:**
-- ⚡ 50% reduction in deployment time
-- ✅ 100% test coverage
+- ⚡ 50% reduction in deployment time (10 min → 5 min)
+- ✅ 92% test coverage with 30 comprehensive tests
 - 🚀 Automated 40+ releases/year capability
-- 🔍 Zero-downtime deployments
+- 🔗 Real-time GitHub webhook integration
+- ☁️ Cloud-deployed on AWS EC2 with SSL
 
 ## 🏗️ Architecture
 
@@ -106,15 +111,33 @@ pytest tests/ -v --cov=src --cov-report=html
 View coverage report: `htmlcov/index.html`
 
 ### Test Results
-- ✅ 4/4 tests passing
-- 📊 100% code coverage
+- ✅ 30/30 tests passing
+- 📊 92% code coverage (only `__main__` block uncovered)
 - ⚡ <1 second execution time
+- 🎯 Edge cases, error handling, and concurrent requests tested
 
-## 🔧 Jenkins Setup
+## 🔧 Jenkins Deployment
 
-### 1. Install Jenkins
+### Live Production Setup
 
-**Download Jenkins WAR:**
+**Jenkins URL:** [https://sushilkumarsb.xyz](https://sushilkumarsb.xyz/job/jenkins-cicd-automation/)  
+**Deployment:** AWS EC2 Ubuntu 24.04 with Nginx reverse proxy  
+**SSL:** Free Let's Encrypt certificate  
+**Webhook:** GitHub push events trigger automatic builds
+
+### Architecture
+
+```
+GitHub Push → Webhook → AWS EC2 Jenkins → Pipeline Execution
+                         ↓
+                   [Build → Test → Quality]
+                         ↓
+                   Results Published
+```
+
+### Local Development Setup (Optional)
+
+If you want to run Jenkins locally for testing:
 ```bash
 mkdir C:\Jenkins
 cd C:\Jenkins
