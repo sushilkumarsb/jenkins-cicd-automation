@@ -13,10 +13,15 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Installing dependencies...'
+                echo 'Setting up Python virtual environment...'
                 sh '''
-                    python3 -m pip install --upgrade pip --user
-                    python3 -m pip install -r src/requirements.txt --user
+                    # Create virtual environment
+                    python3 -m venv venv
+                    
+                    # Activate and install dependencies
+                    . venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r src/requirements.txt
                 '''
             }
         }
@@ -25,7 +30,9 @@ pipeline {
             steps {
                 echo 'Running tests with coverage...'
                 sh '''
-                    python3 -m pytest tests/ -v --cov=src --cov-report=html --cov-report=xml --junitxml=test-results/results.xml
+                    # Activate virtual environment
+                    . venv/bin/activate
+                    python -m pytest tests/ -v --cov=src --cov-report=html --cov-report=xml --junitxml=test-results/results.xml
                 '''
             }
             post {
@@ -39,8 +46,10 @@ pipeline {
             steps {
                 echo 'Running code quality checks...'
                 sh '''
+                    # Activate virtual environment
+                    . venv/bin/activate
                     echo "Syntax check..."
-                    python3 -m py_compile src/app.py
+                    python -m py_compile src/app.py
                 '''
             }
         }
