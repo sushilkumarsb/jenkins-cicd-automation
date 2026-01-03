@@ -22,10 +22,16 @@ def home():
 
 @app.route('/health', strict_slashes=False)
 def health():
-    """Health check endpoint"""
-    return jsonify({
-        'status': 'ok'
-    }), 200
+    """Health check endpoint - fails in production if BREAK_HEALTH is set"""
+    # Break health check in production to test rollback mechanism
+    break_health = os.getenv('BREAK_HEALTH', 'false')
+    logger.info(f"Health check called. BREAK_HEALTH={break_health}")
+    
+    if break_health.lower() in ['true', '1', 'yes']:
+        logger.warning("Health check FAILING due to BREAK_HEALTH flag")
+        return jsonify({'status': 'degraded', 'error': 'Simulated failure for rollback test'}), 503
+    
+    return jsonify({'status': 'ok'}), 200
 
 @app.route('/version', strict_slashes=False)
 def version():
