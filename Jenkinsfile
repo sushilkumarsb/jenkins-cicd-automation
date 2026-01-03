@@ -42,27 +42,6 @@ pipeline {
             }
         }
         
-        stage('Rollback Check') {
-            when {
-                expression { return params.ROLLBACK == true }
-            }
-            steps {
-                script {
-                    echo '🔄 ROLLBACK MODE ACTIVATED'
-                    echo "Rolling back to previous deployment..."
-                    
-                    sh '''
-                        chmod +x scripts/rollback.sh
-                        ./scripts/rollback.sh
-                    '''
-                    
-                    echo '✅ Rollback completed successfully'
-                    currentBuild.result = 'SUCCESS'
-                    error('Rollback complete - stopping pipeline')
-                }
-            }
-        }
-        
         stage('Build') {
             when {
                 expression { return params.ROLLBACK == false }
@@ -184,13 +163,28 @@ pipeline {
         }
         
         stage('Deploy to AWS') {
-            when {
-                expression { return params.ROLLBACK == false }
-            }
             steps {
                 script {
                     env.STAGE_START_TIME = "${System.currentTimeMillis()}"
                     
+                    // Check if rollback is requested
+                    if (params.ROLLBACK == true) {
+                        echo '🔄 ROLLBACK MODE ACTIVATED'
+                        echo "Rolling back to previous deployment..."
+                        
+                        sh '''
+                            chmod +x scripts/rollback.sh
+                            ./scripts/rollback.sh
+                        '''
+                        
+                        echo '✅ Rollback completed successfully'
+                        def stageDuration = (System.currentTimeMillis() - env.STAGE_START_TIME.toLong()) / 1000
+                        echo "⏱️  Rollback completed in ${stageDuration} seconds"
+                        currentBuild.result = 'SUCCESS'
+                        return  // Exit the script block, skip normal deployment
+                    }
+                    
+                    // Normal deployment flow
                     // Read current deployment state before deployment
                     def previousTag = 'latest'
                     if (fileExists(DEPLOYMENT_STATE_FILE)) {
