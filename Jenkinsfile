@@ -86,28 +86,25 @@ pipeline {
         stage('Deploy to AWS') {
             steps {
                 echo 'Deploying containerized app to AWS EC2...'
-                sshagent(['aws-ec2-ssh-key']) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ubuntu@${EC2_HOST} '
-                            # Pull latest image
-                            docker pull ${DOCKER_IMAGE}:latest
-                            
-                            # Stop and remove old container if exists
-                            docker stop flask-app || true
-                            docker rm flask-app || true
-                            
-                            # Run new container
-                            docker run -d \\
-                                --name flask-app \\
-                                --restart unless-stopped \\
-                                -p 5000:5000 \\
-                                ${DOCKER_IMAGE}:latest
-                            
-                            # Verify container is running
-                            docker ps | grep flask-app
-                        '
-                    """
-                }
+                echo 'Pulling latest Docker image and running container...'
+                sh """
+                    # Deploy directly on localhost (Jenkins is on EC2)
+                    docker pull ${DOCKER_IMAGE}:latest
+                    
+                    # Stop and remove old container if exists
+                    docker stop flask-app || true
+                    docker rm flask-app || true
+                    
+                    # Run new container
+                    docker run -d \\
+                        --name flask-app \\
+                        --restart unless-stopped \\
+                        -p 127.0.0.1:5000:5000 \\
+                        ${DOCKER_IMAGE}:latest
+                    
+                    # Verify container is running
+                    docker ps | grep flask-app
+                """
             }
         }
     }
