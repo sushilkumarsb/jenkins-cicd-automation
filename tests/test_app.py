@@ -1,7 +1,9 @@
 """
 Unit tests for the Flask application
 """
-from app import add_numbers
+import pytest
+import json
+from src.app import add_numbers
 
 def test_health_endpoint(client):
     """Test GET /health endpoint returns 200 and status='ok'"""
