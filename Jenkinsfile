@@ -8,6 +8,7 @@ pipeline {
     parameters {
         booleanParam(name: 'ROLLBACK', defaultValue: false, description: 'Rollback to previous deployment?')
         string(name: 'ROLLBACK_TAG', defaultValue: '', description: 'Specific tag to rollback to (leave empty for previous)')
+        string(name: 'BRANCH', defaultValue: '*/master', description: 'branch name to be used for building. Default is master')
     }
 
     environment {
@@ -23,6 +24,24 @@ pipeline {
     }
     
     stages {
+        stage('Checkout') {
+            when {
+                expression { return params.ROLLBACK == false }
+            }
+            steps {
+                script {
+                    echo "📥 Checking out branch: ${params.BRANCH}"
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: "${params.BRANCH}"]],
+                        userRemoteConfigs: scm.userRemoteConfigs,
+                        extensions: scm.extensions
+                    ])
+                    echo "✅ Branch ${params.BRANCH} checked out successfully"
+                }
+            }
+        }
+        
         stage('Rollback Check') {
             when {
                 expression { return params.ROLLBACK == true }
@@ -53,6 +72,7 @@ pipeline {
                     env.STAGE_START_TIME = "${System.currentTimeMillis()}"
                 }
                 echo 'Setting up Python virtual environment...'
+                echo "Building from branch: ${params.BRANCH}"
                 sh '''
                     # Create virtual environment
                     python3 -m venv venv
