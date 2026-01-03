@@ -20,12 +20,14 @@ def home():
         'version': '1.0.0'
     })
 
-# @app.route('/health', strict_slashes=False)
-# def health():
-#     """Health check endpoint"""
-#     return jsonify({
-#         'status': 'ok'
-#     }), 200
+@app.route('/health', strict_slashes=False)
+def health():
+    """Health check endpoint - fails in production if BREAK_HEALTH is set"""
+    # Break health check in production to test rollback mechanism
+    if os.getenv('BREAK_HEALTH') == 'true':
+        return jsonify({'status': 'degraded', 'error': 'Simulated failure'}), 503
+    
+    return jsonify({'status': 'ok'}), 200
 
 @app.route('/version', strict_slashes=False)
 def version():

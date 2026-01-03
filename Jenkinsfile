@@ -213,11 +213,12 @@ pipeline {
                         docker stop flask-app || true
                         docker rm flask-app || true
                         
-                        # Run new container
+                        # Run new container with BREAK_HEALTH to simulate failure
                         docker run -d \\
                             --name flask-app \\
                             --restart unless-stopped \\
                             -p 127.0.0.1:5000:5000 \\
+                            -e BREAK_HEALTH=true \\
                             ${DOCKER_IMAGE}:latest
                         
                         # Wait for container to start
