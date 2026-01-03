@@ -14,8 +14,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Installing dependencies...'
-                bat '''
-                    python -m pip install --upgrade pip
+                sh '''
+                    python3 -m pip install --upgrade pip
                     pip install -r src/requirements.txt
                 '''
             }
@@ -24,8 +24,8 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running tests with coverage...'
-                bat '''
-                    python -m pytest tests/ -v --cov=src --cov-report=html --cov-report=xml --junitxml=test-results/results.xml
+                sh '''
+                    python3 -m pytest tests/ -v --cov=src --cov-report=html --cov-report=xml --junitxml=test-results/results.xml
                 '''
             }
             post {
@@ -38,9 +38,9 @@ pipeline {
         stage('Code Quality') {
             steps {
                 echo 'Running code quality checks...'
-                bat '''
+                sh '''
                     echo "Syntax check..."
-                    python -m py_compile src/app.py
+                    python3 -m py_compile src/app.py
                 '''
             }
         }
