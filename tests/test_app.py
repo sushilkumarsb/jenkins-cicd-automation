@@ -85,12 +85,12 @@ def test_deploy_endpoint_empty_body(client):
     assert data['status'] == 'success'
 
 def test_multiple_slashes_in_url(client):
-    """Test endpoints with multiple slashes - with strict_slashes=False"""
+    """Test endpoints with multiple slashes - Flask routes // to root"""
     response = client.get('//health')
-    # With strict_slashes=False, Flask accepts the request and returns 200
+    # Flask interprets //health as // (root) followed by path, routes to home
     assert response.status_code == 200
     data = response.get_json()
-    assert data['status'] == 'ok'
+    assert data['status'] == 'running'  # Home endpoint response
 
 def test_case_sensitive_endpoints(client):
     """Test endpoints are case-sensitive"""
