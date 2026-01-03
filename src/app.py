@@ -20,12 +20,12 @@ def home():
         'version': '1.0.0'
     })
 
-@app.route('/health', strict_slashes=False)
-def health():
-    """Health check endpoint"""
-    return jsonify({
-        'status': 'ok'
-    }), 200
+# @app.route('/health', strict_slashes=False)
+# def health():
+#     """Health check endpoint"""
+#     return jsonify({
+#         'status': 'ok'
+#     }), 200
 
 @app.route('/version', strict_slashes=False)
 def version():
