@@ -11,7 +11,7 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-@app.route('/')
+@app.route('/', strict_slashes=False)
 def home():
     """Home endpoint"""
     return jsonify({
@@ -20,21 +20,21 @@ def home():
         'version': '1.0.0'
     })
 
-@app.route('/health')
+@app.route('/health', strict_slashes=False)
 def health():
     """Health check endpoint"""
     return jsonify({
         'status': 'ok'
     }), 200
 
-@app.route('/version')
+@app.route('/version', strict_slashes=False)
 def version():
     """Version endpoint"""
     return jsonify({
         'version': '1.0.0'
     })
 
-@app.route('/deploy', methods=['POST'])
+@app.route('/deploy', methods=['POST'], strict_slashes=False)
 def deploy():
     """Deploy endpoint"""
     logger.info("Deployment triggered")
