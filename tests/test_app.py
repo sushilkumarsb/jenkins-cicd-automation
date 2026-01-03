@@ -85,12 +85,12 @@ def test_deploy_endpoint_empty_body(client):
     assert data['status'] == 'success'
 
 def test_multiple_slashes_in_url(client):
-    """Test endpoints with multiple slashes - Flask treats // as protocol-relative URL"""
+    """Test endpoints with multiple slashes - with strict_slashes=False"""
     response = client.get('//health')
-    # Flask interprets //health as protocol-relative URL (like //example.com)
-    # and redirects with 308 Permanent Redirect to http://health/
-    assert response.status_code == 308
-    assert 'http://health/' in response.headers.get('Location', '')
+    # With strict_slashes=False, Flask accepts the request and returns 200
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['status'] == 'ok'
 
 def test_case_sensitive_endpoints(client):
     """Test endpoints are case-sensitive"""
@@ -101,11 +101,12 @@ def test_case_sensitive_endpoints(client):
     assert response.status_code == 404
 
 def test_endpoint_with_trailing_slash(client):
-    """Test endpoints with trailing slash - Flask strict_slashes behavior"""
+    """Test endpoints with trailing slash - strict_slashes=False behavior"""
     response = client.get('/health/')
-    # Our routes are defined without trailing slashes (/health, not /health/)
-    # Flask returns 404 when trailing slash is added to a route without one
-    assert response.status_code == 404
+    # With strict_slashes=False, routes accept both /health and /health/
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['status'] == 'ok'
 
 def test_endpoint_with_query_parameters(client):
     """Test /health endpoint ignores query parameters"""
